@@ -15,6 +15,14 @@ void printOLED(){
 
     u8x8.setFont(u8x8_font_5x7_r);
 
+    // for (int i = 0; i < 8; i++){
+    //     u8x8.clearLine(i);
+    // }
+    // u8x8.drawString(0, 0, dtostrf(Mode, 0, 0, arrayD));
+    // u8x8.drawString(0, 1, dtostrf(RollAngle, 0, 2, arrayD));
+    // u8x8.drawString(0, 2, dtostrf(PitchAngle, 0, 2, arrayD));
+    // u8x8.drawString(0, 3, dtostrf(MPU_Temp, 0, 2, arrayD));
+
     // Latitude
     u8x8.clearLine(0);
     u8x8.drawString(0, 0, "LA: ");
@@ -63,16 +71,12 @@ void printOLED(){
     }
 
     // GPS_Status
-    u8x8.drawString(9, 6, "GPS: ");
-    if (startGPS){
-        u8x8.drawString(13, 6, "ON");
-    } else {
-        u8x8.drawString(13, 6, "OFF");
-    }
+    u8x8.drawString(9, 6, "PACK: ");
+    u8x8.drawString(14, 6, dtostrf(connLoss, 0, 0, arrayD));
 
     // Temp
     u8x8.clearLine(7);
-    u8x8.drawString(5, 7, "Temp: ");
-    u8x8.drawString(12, 7, dtostrf(MPU_Temp, 0, 0, arrayD));
+    u8x8.drawString(0, 7, "Temp: ");
+    u8x8.drawString(6, 7, dtostrf(MPU_Temp, 0, 0, arrayD));
     
 }

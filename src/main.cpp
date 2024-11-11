@@ -11,6 +11,8 @@ Switch Kill(4);
 
 int startGPS = 0;
 
+const unsigned int delayPeriod = 50;
+
 void mode_init(){
     while (Mode == -1){
         JL.read();
@@ -37,34 +39,44 @@ void setup(){
   NRF_init();
   oled_init();
   mode_init();
+  while (!transmitted) {
+    transmit(JL.x, JL.y, JR.x, JR.y, readPot(), batteryCharge(), Mode, startGPS);
+    printOLED();
+  }
+  delay(delayPeriod);
 }
 
 void loop(){
-  recieve();
 
+  receive();
+  delay(delayPeriod);
   printOLED();
 
   JL.read(); JR.read();
   RTH.read(); Kill.read();
-  if (Kill.prevState == 0 && Kill.state == 1){
-    Mode = 4;
-    buzz(5, 30, 600);
-  } else if (RTH.prevState == 0 && RTH.state == 1 || batteryCharge() < 7.5){
-    Mode = 3;
-    buzz(3, 40, 1600);
-  } else if (JL.isPressed()){
-    Mode = 2;
-    buzz(2, 50, 1600);
-  } else if (JR.isPressed()){
-    if (Mode == 0){
-      Mode = 1;
-    } else {
-      Mode = 0;
+
+  if (Mode != 3){
+    if (Kill.prevState == 0 && Kill.state == 1){
+      Mode = 4;
+      buzz(5, 30, 600);
+    } else if ((RTH.prevState == 0 && RTH.state == 1) || (batteryCharge() < 7.5)){
+      Mode = 3;
+      buzz(3, 40, 1600);
+    } else if (JL.isPressed()){
+      Mode = 2;
+      buzz(2, 50, 1600);
+    } else if (JR.isPressed()){
+      if (Mode == 0){
+        Mode = 1;
+      } else {
+        Mode = 0;
+      }
+      buzz(1, 60, 1800);
     }
-    buzz(1, 60, 1800);
   }
 
-  delay(10);
-
   transmit(JL.x, JL.y, JR.x, JR.y, readPot(), batteryCharge(), Mode, startGPS);
+  delay(delayPeriod);
+
+  printOLED();
 }
