@@ -17,6 +17,27 @@ float RollAngle, PitchAngle, MPU_Temp, Alt, LogicV, PowerV;
 double Lat, Lon;
 bool Signal_Strength = true, transmitted = false, received = false;
 
+// 7 Bytes per packet
+typedef struct {
+    unsigned int mode : 3;
+    unsigned int lsx : 8;
+    unsigned int lsy : 8;
+    unsigned int rsx : 8;
+    unsigned int rsy : 8;
+    unsigned int led : 5;
+    unsigned int bat : 4;
+    unsigned int gps : 1;
+} dataToSend;
+
+typedef struct {
+    unsigned int mode : 3;
+    unsigned int mpu_t : 7;
+    unsigned int alt : 10;
+    unsigned int lbat : 4;
+    unsigned int pbat : 4;
+    double lat : 27;
+    double lon : 27;
+} dataToReceive;
 
 void NRF_init(){
     radio.begin();
@@ -25,27 +46,23 @@ void NRF_init(){
     radio.setPALevel(RF24_PA_HIGH);
 }
 
-struct DataArray{
-    int integers[8];
-};
-
 void transmit(int LSX, int LSY, int RSX, int RSY, int ledPot, int bat, int mode, int startGPS){
     radio.stopListening();
-    DataArray data;
+    dataToSend data;
 
     // Integers
-    data.integers[0] = LSX;
-    data.integers[1] = LSY;
-    data.integers[2] = RSX;
-    data.integers[3] = RSY;
-    data.integers[4] = ledPot;
-    data.integers[5] = bat;
-    data.integers[6] = mode;
-    data.integers[7] = startGPS;
+    data.mode = Mode;
+    data.lsx = (int)(LSX/4);
+    data.lsy = (int)(LSY/4);
+    data.rsx = (int)(RSX/4);
+    data.rsy = (int)(RSY/4);
+    data.led = (int)(ledPot/32);
+    data.bat = (int)(LogicV/10);
+    data.gps = startGPS;
 
 
-    byte mixedArray[sizeof(DataArray)];
-    memcpy(mixedArray, &data, sizeof(DataArray));
+    byte mixedArray[sizeof(data)];
+    memcpy(mixedArray, &data, sizeof(data));
 
     transmitted = false;
     for (int i = 0; i < 25 && !transmitted; i++){

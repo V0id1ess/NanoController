@@ -9,7 +9,7 @@ Joystick JR(14, 15, 2, 1);
 Switch RTH(7);
 Switch Kill(4);
 
-int startGPS = 0;
+bool startGPS = false;
 
 const unsigned int delayPeriod = 50;
 
@@ -22,9 +22,9 @@ void mode_init(){
         } else if (JL.x > 1018 && JR.x < 5){
           Mode = 1;
         } else if (JL.y > 1018 && JR.y > 1018){
-          startGPS = 1;
+          startGPS = true;
         } else if (JL.y < 5 && JR.y < 5){
-          startGPS = 0;
+          startGPS = false;
         }
         printOLED();
         delay(10);

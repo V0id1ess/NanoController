@@ -25,6 +25,6 @@ extern unsigned int connLoss;
 extern float RollAngle, PitchAngle, MPU_Temp, Alt, LogicV, PowerV;
 extern double Lat, Lon;
 extern bool Signal_Strength, transmitted, received;
-extern int startGPS;
+extern bool startGPS;
 
 #endif
