@@ -3,8 +3,9 @@
 
 // Battery Monitor
 int batteryCharge(){
-    int value = analogRead(22);
-    return map(value, 164, 215, 0, 100);
+    int value = analogRead(21);
+    // 0.82V voltage drop
+    return map(value, 571, 736, 0, 100);
 }
 
 // Buzzer
